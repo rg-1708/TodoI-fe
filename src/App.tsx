@@ -1,10 +1,14 @@
 import "./App.css";
+import Layout from "./components/layout/layout";
+import TodoModal from "./components/modals/todoModal";
+import Todos from "./components/todos/todos";
 
 function App() {
   return (
-    <>
-      <div className="w-32 h-32 bg-gray-200"></div>
-    </>
+    <Layout>
+      <TodoModal />
+      <Todos />
+    </Layout>
   );
 }
 
