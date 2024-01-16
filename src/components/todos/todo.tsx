@@ -3,13 +3,13 @@ import { Todo as TodoProps } from "@/types/todo.interface";
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "../ui/button";
 import { Edit, Trash } from "lucide-react";
+import StatusModal from "../modals/statusModal";
 
 const Todo: React.FC<TodoProps> = ({ id, title, description, status }) => {
   return (
@@ -20,9 +20,11 @@ const Todo: React.FC<TodoProps> = ({ id, title, description, status }) => {
       <CardContent>{description}</CardContent>
       <CardFooter>
         <p>{status}</p>
-        <Button variant="secondary" size="icon" className="h-4 w-4 ml-auto">
-          <Edit size={14} />
-        </Button>
+        <StatusModal id={id}>
+          <Button variant="secondary" size="icon" className="h-4 w-4 ml-auto">
+            <Edit size={14} />
+          </Button>
+        </StatusModal>
         <Button
           variant="secondary"
           size="icon"
