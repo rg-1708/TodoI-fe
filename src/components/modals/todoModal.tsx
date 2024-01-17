@@ -24,8 +24,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { useDispatch } from "react-redux";
-import { addTodo } from "@/redux/todo-slice";
+import { addTodoAsync } from "@/redux/todo-slice";
+import { useAppDispatch } from "@/redux/store";
 
 export default function TodoModal() {
   const [open, setOpen] = React.useState(false);
@@ -85,11 +85,11 @@ function TodoForm({ setOpen, className }: TodoFormProps) {
   const [description, setDescription] =
     React.useState<string>(defaultDescription);
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     dispatch(
-      addTodo({
+      addTodoAsync({
         title: name,
         description: description,
       })

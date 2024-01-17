@@ -21,24 +21,20 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 
+import { Input } from "../ui/input";
 import { useAppDispatch } from "@/redux/store";
-import { changeStatusAsync } from "@/redux/todo-slice";
+import { changeTitleDescAsync } from "@/redux/todo-slice";
 
-export default function StatusModal({
+export default function TodoEditModal({
   id,
   children,
+  initialData,
 }: {
   id: string;
   children: React.ReactNode;
+  initialData: { title: string; description: string };
 }) {
   const [open, setOpen] = React.useState(false);
   const isDesktop = useMediaQuery("(min-width: 768px)");
@@ -54,7 +50,7 @@ export default function StatusModal({
               Change Status. Click save changes when you're done.
             </DialogDescription>
           </DialogHeader>
-          <TodoStatusForm itemId={id} setOpen={setOpen} />
+          <TodoForm initialData={initialData} itemId={id} setOpen={setOpen} />
         </DialogContent>
       </Dialog>
     );
@@ -70,7 +66,12 @@ export default function StatusModal({
             Change Status. Click save changes when you're done.
           </DrawerDescription>
         </DrawerHeader>
-        <TodoStatusForm setOpen={setOpen} itemId={id} className="px-4" />
+        <TodoForm
+          initialData={initialData}
+          setOpen={setOpen}
+          itemId={id}
+          className="px-4"
+        />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>
@@ -84,19 +85,25 @@ export default function StatusModal({
 interface TodoFormProps extends React.ComponentProps<"form"> {
   itemId: string;
   setOpen(condition: boolean): void;
+  initialData: { title: string; description: string };
 }
 
-function TodoStatusForm({ setOpen, className, itemId }: TodoFormProps) {
-  const defaultStatus = "Pending";
-  const [status, setStatus] = React.useState<string>(defaultStatus);
+function TodoForm({ setOpen, className, itemId, initialData }: TodoFormProps) {
+  const defaultTitle = initialData.title;
+  const defaultDescription = initialData.description;
+
+  const [name, setName] = React.useState<string>(defaultTitle);
+  const [description, setDescription] =
+    React.useState<string>(defaultDescription);
 
   const dispatch = useAppDispatch();
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     dispatch(
-      changeStatusAsync({
-        status,
+      changeTitleDescAsync({
         id: itemId,
+        title: name,
+        description: description,
       })
     );
     setOpen(false);
@@ -108,19 +115,24 @@ function TodoStatusForm({ setOpen, className, itemId }: TodoFormProps) {
       className={cn("grid items-start gap-4", className)}
     >
       <div className="grid gap-2">
-        <Label htmlFor="status">Todo Status</Label>
-        <Select onValueChange={(value) => setStatus(value)}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Pending">Pending</SelectItem>
-            <SelectItem value="InProgress">In Progress</SelectItem>
-            <SelectItem value="Completed">Completed</SelectItem>
-          </SelectContent>
-        </Select>
+        <Label htmlFor="title">Todo Title</Label>
+        <Input
+          type="text"
+          id="title"
+          defaultValue={defaultTitle}
+          onChange={(e) => setName(e.target.value)}
+        />
       </div>
-      <Button type="submit">Save Changes</Button>
+      <div className="grid gap-2">
+        <Label htmlFor="description">Todo Description</Label>
+        <Input
+          type="text"
+          id="description"
+          defaultValue={defaultDescription}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+      </div>
+      <Button type="submit">Create</Button>
     </form>
   );
 }

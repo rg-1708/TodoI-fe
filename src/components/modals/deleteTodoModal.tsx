@@ -21,19 +21,11 @@ import {
   DrawerTitle,
   DrawerTrigger,
 } from "@/components/ui/drawer";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
 
 import { useAppDispatch } from "@/redux/store";
-import { changeStatusAsync } from "@/redux/todo-slice";
+import { deleteAsync } from "@/redux/todo-slice";
 
-export default function StatusModal({
+export default function DeleteTodoModal({
   id,
   children,
 }: {
@@ -49,12 +41,13 @@ export default function StatusModal({
         <DialogTrigger asChild>{children}</DialogTrigger>
         <DialogContent className="sm:max-w-[425px]">
           <DialogHeader>
-            <DialogTitle>Change Status</DialogTitle>
+            <DialogTitle>Delete ToDo</DialogTitle>
             <DialogDescription>
-              Change Status. Click save changes when you're done.
+              Delete Todo. Click delete{" "}
+              <span className="font-semibold">only if you are sure.</span>
             </DialogDescription>
           </DialogHeader>
-          <TodoStatusForm itemId={id} setOpen={setOpen} />
+          <DeleteTodoForm itemId={id} setOpen={setOpen} />
         </DialogContent>
       </Dialog>
     );
@@ -65,12 +58,13 @@ export default function StatusModal({
       <DrawerTrigger asChild>{children}</DrawerTrigger>
       <DrawerContent>
         <DrawerHeader className="text-left">
-          <DrawerTitle>Change Status</DrawerTitle>
+          <DrawerTitle>Delete ToDo</DrawerTitle>
           <DrawerDescription>
-            Change Status. Click save changes when you're done.
+            Delete Todo. Click delete{" "}
+            <span className="font-semibold">only if you are sure.</span>
           </DrawerDescription>
         </DrawerHeader>
-        <TodoStatusForm setOpen={setOpen} itemId={id} className="px-4" />
+        <DeleteTodoForm setOpen={setOpen} itemId={id} className="px-4" />
         <DrawerFooter className="pt-2">
           <DrawerClose asChild>
             <Button variant="outline">Cancel</Button>
@@ -86,16 +80,12 @@ interface TodoFormProps extends React.ComponentProps<"form"> {
   setOpen(condition: boolean): void;
 }
 
-function TodoStatusForm({ setOpen, className, itemId }: TodoFormProps) {
-  const defaultStatus = "Pending";
-  const [status, setStatus] = React.useState<string>(defaultStatus);
-
+function DeleteTodoForm({ setOpen, className, itemId }: TodoFormProps) {
   const dispatch = useAppDispatch();
   const onSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     dispatch(
-      changeStatusAsync({
-        status,
+      deleteAsync({
         id: itemId,
       })
     );
@@ -108,19 +98,9 @@ function TodoStatusForm({ setOpen, className, itemId }: TodoFormProps) {
       className={cn("grid items-start gap-4", className)}
     >
       <div className="grid gap-2">
-        <Label htmlFor="status">Todo Status</Label>
-        <Select onValueChange={(value) => setStatus(value)}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="Pending">Pending</SelectItem>
-            <SelectItem value="InProgress">In Progress</SelectItem>
-            <SelectItem value="Completed">Completed</SelectItem>
-          </SelectContent>
-        </Select>
+        <span className="text-xs text-red-400">Deleting can't be reversed</span>
       </div>
-      <Button type="submit">Save Changes</Button>
+      <Button type="submit">Delete ToDo</Button>
     </form>
   );
 }
