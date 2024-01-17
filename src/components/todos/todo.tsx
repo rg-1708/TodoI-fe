@@ -12,16 +12,35 @@ import { CheckCircle, Edit, Trash } from "lucide-react";
 import StatusModal from "../modals/statusModal";
 import DeleteTodoModal from "../modals/deleteTodoModal";
 import TodoEditModal from "../modals/todoEditModal";
+import { cn } from "@/lib/utils";
 
 const Todo: React.FC<TodoProps> = ({ _id, title, description, status }) => {
   return (
-    <Card className="w-[300px] h-[200px] md:w-[350px] md:h-[200px]">
+    <Card className="w-[300px] md:w-[350px] shadow-md">
       <CardHeader>
-        <CardTitle>{title}</CardTitle>
+        <CardTitle
+          className={cn(
+            "font-bold",
+            status === "InProgress" && "text-indigo-400",
+            status === "Completed" && "text-green-400"
+          )}
+        >
+          {title}
+        </CardTitle>
       </CardHeader>
-      <CardContent>{description}</CardContent>
+      <CardContent className="overflow-hidden text-ellipsis break-words">
+        {description}
+      </CardContent>
       <CardFooter>
-        <p>{status}</p>
+        <p
+          className={cn(
+            "italic",
+            status === "InProgress" && "text-indigo-400",
+            status === "Completed" && "text-green-400"
+          )}
+        >
+          {status}
+        </p>
         <TodoEditModal initialData={{ title, description }} id={_id}>
           <Button variant="secondary" size="icon" className="h-4 w-4 ml-auto">
             <Edit size={14} />
